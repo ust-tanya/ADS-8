@@ -1,15 +1,60 @@
-// Copyright 2022 NNTU-CS
-#include <iostream>
+// Copyright 2021 NNTU-CS
 #include "train.h"
 
-int main() {
-  Train train;
-  int count = 60; // кол-во вагонов
+Train::Cage *Train::create(bool light) {
+  Cage* carrg = new Cage;
+  carrg->light = light;
+  carrg->next = carrg->prev = nullptr;
+  return carrg;
+}
 
-  while (count--)
-    train.addCage(false);
+Train::Train() {
+  first = current = nullptr;
+  countOp = len = Count = 0;
+}
 
-  std::cout << train.getLength() << std::endl;
-  std::cout << train.getOpCount() << std::endl;
-  return 0;
+void Train::addCage(bool light) {
+  if (!(first)) {
+  first = create(light);
+  current = first;
+  } else {
+  current->next = create(light);
+  current->next->prev = current;
+  current = current->next;
+  if (!current->next) {
+  current->next = first;
+  } else {
+  first->prev = current;
+  }
+  }
+}
+
+int Train::getLength() {
+  first->light = true;
+  current = first;
+  int num;
+  while (true) {
+  ++countOp, ++Count;
+  current = current->next;
+  if (current->light) {
+  num = Count;
+  current->light = false;
+  if ((current->prev) != nullptr) {
+  while (current->light == false) {
+  current = current->prev;
+  --Count, ++countOp;
+  }
+  }
+  if (!current->light) {
+  len = num;
+  break;
+  }
+  }
+  }
+  countOp += len;
+  return len;
+}
+
+int Train::getOpCount() {
+  return countOp;
 }

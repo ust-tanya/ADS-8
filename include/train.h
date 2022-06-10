@@ -5,9 +5,9 @@
 class Train {
  private:
   struct Cage {
-  bool light;
-  Cage *next;
-  Cage *prev;
+    bool light;
+    Cage *next;
+    Cage *prev;
   };
   int countOp, len, Count;
   Cage *first, *current;

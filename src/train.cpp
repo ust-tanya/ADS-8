@@ -1,56 +1,63 @@
 // Copyright 2021 NNTU-CS
 #include "train.h"
 
-Train::Train(): countOp(0), first(nullptr) {}
+Train::Cage *Train::create(bool light) {
+  Cage* item = new Cage;
+  item->light = light;
+  item->next = item->prev = nullptr;
+  return item;
+}
+
+Train::Train() {
+  first = current = nullptr;
+  countOp = length = Count = 0;
+}
 
 void Train::addCage(bool light) {
-    if (first != nullptr) {
-        Cage* step;
-        step = new Cage;
-        step->light = light;
-        step->next = nullptr;
-        step->prev = last;
-        last->next = step;
-        last = step;
+  if (!(first)) {
+    first = create(light);
+    current = first;
+  } else {
+    current->next = create(light);
+    current->next->prev = current;
+    current = current->next;
+    if (!current->next) {
+      current->next = first;
     } else {
-        first = new Cage;
-        first->light = light;
-        first->next = nullptr;
-        first->prev = nullptr;
-        last = first;
-        return;
+      first->prev = current;
     }
+  }
 }
+
 int Train::getLength() {
-        first->light = true;
-        first->prev = last;
-        last->next = first;
-        Cage* temp = first;
-        Cage* van = first->next;
-        while (van != nullptr) {
-            if (!van->light) {
-                count++;
-                countOp++;
-                van = van->next;
-            } else {
-                if (van->light) {
-                        van->light = 0;
-                    countOp++;
-                }
-                for (int i = count; i > 0; i--) {
-                    van = van->prev;
-                    countOp++;
-                }
-                if (!van->light) {
-                    break;
-                }
-                van = van->next;
-                count = 1;
-            }
+  first->light = true;
+  current = first;
+  int temp;
+  while (true) {
+    ++countOp, ++Count;
+    current = current->next;
+    if (current->light) {
+      temp = Count;
+      current->light = false;
+      if ((current->prev) != nullptr) {
+        while (current->light == false) {
+          current = current->prev;
+          --Count, ++countOp;
         }
-        return count;
+      }
+      if (!current->light) {
+        length = temp;
+        break;
+      }
     }
+  }
+  countOp += length;
+  return length;
+}
 
 int Train::getOpCount() {
   return countOp;
 }
+© 2022 GitHub, Inc.
+Terms
+Privacy

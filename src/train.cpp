@@ -58,6 +58,3 @@ int Train::getLength() {
 int Train::getOpCount() {
   return countOp;
 }
-© 2022 GitHub, Inc.
-Terms
-Privacy
